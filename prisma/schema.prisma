@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb://admin:senha123@localhost:27017/ia_lexa?authSource=admin&replicaSet=rs0"
+}
+
+model schedule {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  assunto   String
+  descricao String
+  dia       String
+  horario   String
+}

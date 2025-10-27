@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: nestjs-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: senha123
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - nestjs-network
+    entrypoint:
+      - bash
+      - -c
+      - |
+        openssl rand -base64 756 > /data/replica.key
+        chmod 400 /data/replica.key
+        chown 999:999 /data/replica.key
+        exec docker-entrypoint.sh mongod --replSet rs0 --keyFile /data/replica.key --bind_ip_all
+    healthcheck:
+      test: |
+        mongosh admin --username admin --password senha123 --quiet --eval "
+        try {
+          var status = rs.status();
+          if (status.ok === 1) quit(0);
+        } catch (e) {
+          if (e.codeName === 'NotYetInitialized') {
+            rs.initiate({
+              _id: 'rs0',
+              members: [{ _id: 0, host: 'localhost:27017' }]
+            });
+            quit(0);
+          }
+        }
+        quit(1);
+        "
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: senha123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:senha123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - nestjs-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - '5672:5672'   # Comunicação AMQP
+      - '15672:15672' # Painel de controle web
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - nestjs-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  nestjs-network:
+    driver: bridge
