@@ -14,10 +14,10 @@ export class ScheduleService {
   }
 
   async getSchedulesByDate(data: string): Promise<any[]> {
-    const { dt_ini, dt_fim } = JSON.parse(data);
+    const parsed = JSON.parse(data) as { dt_ini: string; dt_fim: string };
     const response = await this.scheduleRepository.getSchedulesByDate(
-      dt_ini,
-      dt_fim,
+      parsed.dt_ini,
+      parsed.dt_fim,
     );
     return response;
   }
@@ -28,5 +28,13 @@ export class ScheduleService {
 
   async deleteSchedule(id: string): Promise<void> {
     await this.scheduleRepository.deleteSchedule(id);
+  }
+
+  async updateSchedule(id: string, updates: any): Promise<any> {
+    return this.scheduleRepository.updateSchedule(id, updates);
+  }
+
+  async getScheduleById(id: string): Promise<any> {
+    return this.scheduleRepository.getScheduleById(id);
   }
 }

@@ -69,4 +69,34 @@ export class ScheduleRepository {
       throw new InternalServerErrorException('Erro ao deletar o agendamento');
     }
   }
+
+  async updateSchedule(id: string, updates: any): Promise<any> {
+    try {
+      // Filtra os campos null (campos não modificados)
+      const filteredUpdates = Object.fromEntries(
+        Object.entries(updates).filter(([, value]) => value !== null),
+      );
+
+      const schedule = await this.prisma.schedule.update({
+        where: { id: id },
+        data: filteredUpdates,
+      });
+      return schedule;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Erro ao atualizar o agendamento');
+    }
+  }
+
+  async getScheduleById(id: string): Promise<any> {
+    try {
+      const schedule = await this.prisma.schedule.findUnique({
+        where: { id: id },
+      });
+      return schedule;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Erro ao buscar agendamento');
+    }
+  }
 }

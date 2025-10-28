@@ -126,12 +126,13 @@ Possíveis intenções:
 1. Criar uma nova tarefa → "new-task" (qualquer compromisso, compromisso pessoal, reunião ou ação agendada)
 2. Consultar tarefas já agendadas → "get-task"
 3. Deletar um compromisso ou tarefa → "delete-task"
-4. Nenhuma das opções acima → "nenhum-dos-dois"
+4. Editar/Alterar/Mudar um compromisso ou tarefa existente → "edit-task"
+5. Nenhuma das opções acima → "nenhum-dos-dois"
 
 Responda **APENAS** com o JSON abaixo, sem explicações, comentários ou markdown:
 
 {
-  "action": "new-task" | "get-task" | "delete-task" | "nenhum-dos-dois"
+  "action": "new-task" | "get-task" | "delete-task" | "edit-task" | "nenhum-dos-dois"
 }
 
 Exemplos:
@@ -147,6 +148,12 @@ Saída: {"action": "get-task"}
 
 Mensagem: "Apague meu compromisso com o médico de amanhã"
 Saída: {"action": "delete-task"}
+
+Mensagem: "Mudar o horário da reunião de amanhã para as 15h"
+Saída: {"action": "edit-task"}
+
+Mensagem: "Atualizar a data do dentista para dia 20"
+Saída: {"action": "edit-task"}
 
 Mensagem: "Oi, tudo bem?"
 Saída: {"action": "nenhum-dos-dois"}
