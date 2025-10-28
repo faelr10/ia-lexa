@@ -69,7 +69,7 @@ export class ChatGptService {
         console.log('entrou no nenhum-dos-dois');
       }
 
-      return 'Ok1';
+      return 'Ok';
     } catch (error: unknown) {
       console.error('Erro na API da OpenAI:', error);
       if (error && typeof error === 'object' && 'response' in error) {
