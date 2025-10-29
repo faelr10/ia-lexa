@@ -6,10 +6,31 @@ import { PrismaClient } from '@prisma/client';
 export class ScheduleRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
+  private normalizeStatus(value: unknown): 'pending' | 'completed' | undefined {
+    if (typeof value !== 'string') return undefined;
+    const v = value.trim().toLowerCase();
+    if (v === 'pending' || v === 'pendente') return 'pending';
+    if (
+      v === 'completed' ||
+      v === 'concluida' ||
+      v === 'concluído' ||
+      v === 'concluido'
+    )
+      return 'completed';
+    return undefined;
+  }
+
   async saveSchedule(data: any): Promise<any> {
     try {
+      const parsed = JSON.parse(data) as Record<string, unknown>;
+      const normalized = this.normalizeStatus(parsed?.status);
+      const payload = {
+        ...parsed,
+        status: normalized ?? 'pending',
+      } as any;
+
       const schedule = await this.prisma.schedule.create({
-        data: JSON.parse(data),
+        data: payload,
       });
       return schedule;
     } catch (error) {
@@ -21,7 +42,15 @@ export class ScheduleRepository {
   async listAllSchedules(): Promise<any[]> {
     try {
       const schedules = await this.prisma.schedule.findMany();
-      return schedules;
+      return schedules.map((s) => {
+        const obj = s as Record<string, unknown>;
+        const status = typeof obj.status === 'string' ? obj.status : undefined;
+
+        return {
+          ...s,
+          status: status ?? 'pending',
+        };
+      });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Erro ao listar agendamentos');
@@ -38,7 +67,15 @@ export class ScheduleRepository {
           },
         },
       });
-      return schedules;
+      return schedules.map((s) => {
+        const obj = s as Record<string, unknown>;
+        const status = typeof obj.status === 'string' ? obj.status : undefined;
+
+        return {
+          ...s,
+          status: status ?? 'pending',
+        };
+      });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -50,7 +87,15 @@ export class ScheduleRepository {
   async getAllSchedules(): Promise<any[]> {
     try {
       const schedules = await this.prisma.schedule.findMany();
-      return schedules;
+      return schedules.map((s) => {
+        const obj = s as Record<string, unknown>;
+        const status = typeof obj.status === 'string' ? obj.status : undefined;
+
+        return {
+          ...s,
+          status: status ?? 'pending',
+        };
+      });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -75,7 +120,18 @@ export class ScheduleRepository {
       // Filtra os campos null (campos não modificados)
       const filteredUpdates = Object.fromEntries(
         Object.entries(updates).filter(([, value]) => value !== null),
-      );
+      ) as Record<string, unknown>;
+
+      // Normaliza status quando fornecido
+      if (Object.prototype.hasOwnProperty.call(filteredUpdates, 'status')) {
+        const normalized = this.normalizeStatus(filteredUpdates.status);
+        if (normalized) {
+          filteredUpdates.status = normalized as any;
+        } else {
+          // Remove status inválido para não quebrar a atualização
+          delete filteredUpdates.status;
+        }
+      }
 
       const schedule = await this.prisma.schedule.update({
         where: { id: id },
@@ -93,7 +149,14 @@ export class ScheduleRepository {
       const schedule = await this.prisma.schedule.findUnique({
         where: { id: id },
       });
-      return schedule;
+      if (!schedule) return schedule;
+      const obj = schedule as Record<string, unknown>;
+      const status = typeof obj.status === 'string' ? obj.status : undefined;
+
+      return {
+        ...schedule,
+        status: status ?? 'pending',
+      };
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Erro ao buscar agendamento');

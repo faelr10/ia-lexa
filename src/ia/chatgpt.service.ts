@@ -189,6 +189,7 @@ export class ChatGptService {
         descricao: task.descricao || '',
         dia: task.dia,
         horario: task.horario || '',
+        status: task.status || 'pending',
       }))
       .sort((a: any, b: any) => {
         // Ordenar por data primeiro

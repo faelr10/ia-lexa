@@ -7,10 +7,16 @@ datasource db {
   url      = "mongodb://admin:senha123@localhost:27017/ia_lexa?authSource=admin&replicaSet=rs0"
 }
 
+enum Status {
+  pending
+  completed
+}
+
 model schedule {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   assunto   String
   descricao String
   dia       String
   horario   String
+  status    Status @default(pending)
 }
