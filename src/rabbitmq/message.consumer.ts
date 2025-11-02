@@ -27,7 +27,7 @@ export class MessageConsumer implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     console.log('🎧 Iniciando consumer do RabbitMQ...');
 
-    this.connection = amqp.connect(['amqp://admin:admin@localhost:5672'], {
+    this.connection = amqp.connect([process.env.RABBITMQ_URL as string], {
       heartbeatIntervalInSeconds: 30,
       reconnectTimeInSeconds: 2,
     });

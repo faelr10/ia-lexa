@@ -55,7 +55,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private isReady = false;
 
   constructor() {
-    this.connection = connect(['amqp://admin:admin@localhost:5672'], {
+    this.connection = connect([process.env.RABBITMQ_URL as string], {
       heartbeatIntervalInSeconds: 30,
       reconnectTimeInSeconds: 2,
     });

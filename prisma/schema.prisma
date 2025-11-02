@@ -4,12 +4,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = "mongodb://admin:senha123@localhost:27017/ia_lexa?authSource=admin&replicaSet=rs0"
-}
-
-enum Status {
-  pending
-  completed
+  url      = env("DATABASE_URL")
 }
 
 model schedule {
@@ -18,5 +13,5 @@ model schedule {
   descricao String
   dia       String
   horario   String
-  status    Status @default(pending)
+  status    String
 }
