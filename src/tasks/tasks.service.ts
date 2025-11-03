@@ -21,8 +21,13 @@ export class TasksService {
     console.log('Rodando tarefa diária à meia-noite!');
   }
 
-  // Executa a cada 1 hora
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  // Executa a cada 1 HORA
+  @Cron(CronExpression.EVERY_MINUTE)
+  handleEveryHourTask() {
+    console.log('Rodando a cada 1 MINUTO!');
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
   async handleEveryHour() {
     //busca tarefas do dia
     const today = new Date();

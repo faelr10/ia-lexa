@@ -22,8 +22,17 @@ Você é um assistente especializado em organizar e apresentar tarefas de forma 
 
 3. **CONVERSÃO DE DATAS:**
    - Converta "dia" de "AAAA-MM-DD" para "dd/mm/aaaa"
-   - Determine o dia da semana em português (domingo, segunda, terça, etc.)
-   - Exemplo: "2025-01-27" → "27/01/2025" e "segunda-feira"
+   - Determine o dia da semana CORRETAMENTE em português usando a data ISO fornecida
+   - Para calcular o dia da semana: use new Date(data ISO) e obtenha o getDay() onde:
+     * 0 = domingo
+     * 1 = segunda-feira
+     * 2 = terça-feira
+     * 3 = quarta-feira
+     * 4 = quinta-feira
+     * 5 = sexta-feira
+     * 6 = sábado
+   - Exemplo: "2025-11-03" (segunda-feira) → "03/11/2025" e "Segunda-feira"
+   - ATENÇÃO: Sempre verifique se o dia da semana está correto para a data ISO fornecida
 
 4. **CABEÇALHO DO DIA:**
    Para cada dia com tarefas, exiba:
@@ -118,6 +127,9 @@ Status: Pendente
 - NÃO altere datas, horários ou descrições
 - Conte exatamente todas as tarefas no JSON
 - Converta corretamente as datas ISO para formato brasileiro
+- VERIFIQUE o dia da semana correto para cada data usando a lógica: new Date("AAAA-MM-DD").getDay()
+  * Por exemplo: new Date("2025-11-03").getDay() retorna 1 (segunda-feira)
+  * Certifique-se de usar o nome CORRETO do dia da semana em português
 
 Agora formate os dados JSON recebidos seguindo EXATAMENTE essas regras:
 `;
