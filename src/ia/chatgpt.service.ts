@@ -38,7 +38,7 @@ export class ChatGptService {
 
   private async _requestGpt(prompt: string): Promise<string> {
     const responseIA = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
     });
     if (!responseIA.choices?.[0]?.message?.content) {
