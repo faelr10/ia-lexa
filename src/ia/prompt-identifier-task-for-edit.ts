@@ -31,7 +31,8 @@ FORMATO JSON OBRIGATÓRIO:
   "dia": "YYYY-MM-DD",
   "horario": "HH:MM",
   "assunto": "string",
-  "descricao": "string"
+  "descricao": "string",
+  "status": "pending" | "completed"
 }
 
 REGRAS DE EXTRAÇÃO:
@@ -41,28 +42,46 @@ REGRAS DE EXTRAÇÃO:
 4. Se o usuário não mencionou um campo específico, deixe como null.
 5. Se o usuário mencionou explicitamente "remover" ou "cancelar" um campo, deixe como "" (string vazia).
 
+CAMPO STATUS:
+- Se o usuário mencionar "concluir", "concluído", "feito", "finalizar", "completar" → "completed"
+- Se o usuário mencionar "pendente", "reabrir", "desfazer conclusão", "não fiz ainda" → "pending"
+- Se não mencionar status → null
+
 Formato de saída:
-- Se mencionou novo dia/horário/assunto/descricao → inclua no JSON
+- Se mencionou novo dia/horário/assunto/descricao/status → inclua no JSON
 - Se não mencionou → deixe null
 
 Exemplos:
 Mensagem: "agora é para as 15h"
-Saída: {"dia": null, "horario": "15:00", "assunto": null, "descricao": null}
+Saída: {"dia": null, "horario": "15:00", "assunto": null, "descricao": null, "status": null}
 
 Mensagem: "mudar para segunda às 10h"
-Saída: {"dia": "2025-10-27", "horario": "10:00", "assunto": null, "descricao": null}
+Saída: {"dia": "2025-10-27", "horario": "10:00", "assunto": null, "descricao": null, "status": null}
 
 Mensagem: "nova descrição: reunião importante com o cliente"
-Saída: {"dia": null, "horario": null, "assunto": null, "descricao": "Reunião importante com o cliente"}
+Saída: {"dia": null, "horario": null, "assunto": null, "descricao": "Reunião importante com o cliente", "status": null}
 
 Mensagem: "mudar o assunto para Dentista"
-Saída: {"dia": null, "horario": null, "assunto": "Dentista", "descricao": null}
+Saída: {"dia": null, "horario": null, "assunto": "Dentista", "descricao": null, "status": null}
+
+Mensagem: "marcar como concluído"
+Saída: {"dia": null, "horario": null, "assunto": null, "descricao": null, "status": "completed"}
+
+Mensagem: "marcar como pendente"
+Saída: {"dia": null, "horario": null, "assunto": null, "descricao": null, "status": "pending"}
+
+Mensagem: "já fiz essa tarefa"
+Saída: {"dia": null, "horario": null, "assunto": null, "descricao": null, "status": "completed"}
+
+Mensagem: "ainda não fiz, deixar como pendente"
+Saída: {"dia": null, "horario": null, "assunto": null, "descricao": null, "status": "pending"}
 
 IMPORTANTE:
 - Retorne APENAS o JSON válido, sem texto adicional ou markdown
 - Campos não mencionados devem ser null
 - Campos a remover devem ser "" (string vazia)
 - Todos os campos são strings ou null
+- Status só pode ser "pending", "completed" ou null
 
 Mensagem a processar:
 "${mensagemUsuario}"
