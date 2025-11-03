@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TelegramModule } from './telegram/telegram.module';
@@ -8,7 +9,13 @@ import { TasksModule } from './tasks/tasks.module';
 import { HealthModule } from './health/health.module';
 
 @Module({
-  imports: [TelegramModule, ChatGptModule, TasksModule, HealthModule],
+  imports: [
+    ScheduleModule.forRoot(), // Importar apenas aqui uma vez
+    TelegramModule,
+    ChatGptModule,
+    TasksModule,
+    HealthModule,
+  ],
   controllers: [AppController],
   providers: [AppService, MessageConsumer],
 })

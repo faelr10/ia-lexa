@@ -16,29 +16,31 @@ export class TasksService {
   ) {}
 
   // Executa todo dia às 7 da manhã
-  @Cron(CronExpression.EVERY_DAY_AT_7AM)
-  handleMidnightTask() {
-    console.log('Rodando tarefa diária à meia-noite!');
-  }
-
-  // Executa a cada 1 HORA
-  @Cron(CronExpression.EVERY_MINUTE)
-  handleEveryHourTask() {
-    console.log('Rodando a cada 1 MINUTO!');
-  }
-
   @Cron(CronExpression.EVERY_HOUR)
-  async handleEveryHour() {
-    //busca tarefas do dia
+  async handleMorningTask() {
+    console.log('🌅 Rodando tarefa diária às 7h da manhã!');
+
+    // Busca tarefas do dia
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const period = `{"dt_ini":"${yyyy}-${mm}-${dd}","dt_fim":"${yyyy}-${mm}-${dd}"}`;
+
     const listTasks = await this.scheduleService.getSchedulesByDate(period);
 
-    await this.chatGptService.formatedListSchedules(listTasks);
+    // Só envia se houver tarefas
+    if (listTasks && listTasks.length > 0) {
+      console.log(`📋 Enviando ${listTasks.length} tarefa(s) do dia...`);
+      await this.chatGptService.formatedListSchedules(listTasks);
+    } else {
+      console.log('📭 Sem tarefas para hoje');
+    }
+  }
 
-    console.log('Rodando a cada 10 segundos...', listTasks);
+  //EXECUTAR CONSOLESOLE.LOG PARA TESTE A CADA MINUTO
+  @Cron(CronExpression.EVERY_MINUTE)
+  handleEveryMinuteTask() {
+    console.log('🕐 Rodando a cada 1 minuto!');
   }
 }
