@@ -5,9 +5,10 @@ import { TelegramModule } from './telegram/telegram.module';
 import { ChatGptModule } from './ia/chatgpt.module';
 import { MessageConsumer } from './rabbitmq/message.consumer';
 import { TasksModule } from './tasks/tasks.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
-  imports: [TelegramModule, ChatGptModule, TasksModule],
+  imports: [TelegramModule, ChatGptModule, TasksModule, HealthModule],
   controllers: [AppController],
   providers: [AppService, MessageConsumer],
 })
